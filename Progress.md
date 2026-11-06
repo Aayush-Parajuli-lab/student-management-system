@@ -41,7 +41,7 @@ Run the test commands in a second terminal (use Git Bash on Windows).
 
 ## Frontend (React + Vite)
 
-- [ ] **Module 6: Frontend setup**
+- [x] **Module 6: Frontend setup**
   - Test: `cd frontend && npm install && npm run dev`
   - Pass: http://localhost:5173 opens the Vite page
 
