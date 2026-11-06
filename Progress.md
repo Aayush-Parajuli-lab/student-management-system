@@ -5,15 +5,15 @@ Run the test commands in a second terminal (use Git Bash on Windows).
 
 ## Backend (Python + FastAPI)
 
-- [ ] **Module 1: Setup** (venv, FastAPI installed, requirements.txt)
+- [x] **Module 1: Setup** (venv, FastAPI installed, requirements.txt)
   - Test: `curl -s -o /dev/null -w "%{http_code}\n" http://localhost:8000/docs`
   - Pass: prints `200`
 
-- [ ] **Module 2: Database and model** (students table, StudentIn model)
+- [x] **Module 2: Database and model** (students table, StudentIn model)
   - Test: `ls backend/students.db`
   - Pass: the file exists after starting the server
 
-- [ ] **Module 3: Add and list students**
+- [x] **Module 3: Add and list students**
   - Test:
     ```
     curl -X POST http://localhost:8000/students -H "Content-Type: application/json" -d '{"name":"Ram","email":"ram@test.com","course":"BCA","age":21}'
@@ -21,7 +21,7 @@ Run the test commands in a second terminal (use Git Bash on Windows).
     ```
   - Pass: Ram appears in the list
 
-- [ ] **Module 4: Update and delete**
+- [x] **Module 4: Update and delete**
   - Test:
     ```
     curl -X PUT http://localhost:8000/students/1 -H "Content-Type: application/json" -d '{"name":"Ram K","email":"ram@test.com","course":"BCA","age":22}'
@@ -30,7 +30,7 @@ Run the test commands in a second terminal (use Git Bash on Windows).
     ```
   - Pass: update shows the new name, delete returns `{"deleted":1}`, id 999 returns "Student not found"
 
-- [ ] **Module 5: Search and validation**
+- [x] **Module 5: Search and validation**
   - Test:
     ```
     curl "http://localhost:8000/students?q=BCA"
