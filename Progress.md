@@ -45,7 +45,7 @@ Run the test commands in a second terminal (use Git Bash on Windows).
   - Test: `cd frontend && npm install && npm run dev`
   - Pass: http://localhost:5173 opens the Vite page
 
-- [ ] **Module 7: Student list table**
+- [x] **Module 7: Student list table**
   - Test: `cd frontend && npm run build`
   - Pass: build succeeds, and the browser shows students from the backend
 
