@@ -6,6 +6,7 @@ const emptyForm = { name: "", email: "", course: "", age: "" };
 export default function App() {
   const [students, setStudents] = useState([]);
   const [form, setForm] = useState(emptyForm);
+  const [editingId, setEditingId] = useState(null);
   const [error, setError] = useState("");
 
   const loadStudents = () => {
@@ -21,12 +22,18 @@ export default function App() {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
+  const resetForm = () => {
+    setForm(emptyForm);
+    setEditingId(null);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
 
-    const res = await fetch(`${API}/students`, {
-      method: "POST",
+    const url = editingId ? `${API}/students/${editingId}` : `${API}/students`;
+    const res = await fetch(url, {
+      method: editingId ? "PUT" : "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         ...form,
@@ -40,7 +47,29 @@ export default function App() {
       return;
     }
 
-    setForm(emptyForm);
+    resetForm();
+    loadStudents();
+  };
+
+  const handleEdit = (s) => {
+    setEditingId(s.id);
+    setForm({
+      name: s.name,
+      email: s.email,
+      course: s.course ?? "",
+      age: s.age ?? "",
+    });
+    setError("");
+  };
+
+  const handleDelete = async (id) => {
+    if (!window.confirm("Delete this student?")) return;
+    const res = await fetch(`${API}/students/${id}`, { method: "DELETE" });
+    if (!res.ok) {
+      setError("Could not delete student");
+      return;
+    }
+    if (editingId === id) resetForm();
     loadStudents();
   };
 
@@ -53,7 +82,12 @@ export default function App() {
         <input name="email" type="email" placeholder="Email" value={form.email} onChange={handleChange} required />
         <input name="course" placeholder="Course" value={form.course} onChange={handleChange} />
         <input name="age" type="number" placeholder="Age" value={form.age} onChange={handleChange} />
-        <button type="submit">Add Student</button>
+        <button type="submit">{editingId ? "Update Student" : "Add Student"}</button>
+        {editingId && (
+          <button type="button" onClick={resetForm}>
+            Cancel
+          </button>
+        )}
       </form>
 
       {error && <p style={{ color: "red" }}>{error}</p>}
@@ -66,6 +100,7 @@ export default function App() {
             <th>Email</th>
             <th>Course</th>
             <th>Age</th>
+            <th>Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -76,6 +111,10 @@ export default function App() {
               <td>{s.email}</td>
               <td>{s.course}</td>
               <td>{s.age}</td>
+              <td>
+                <button onClick={() => handleEdit(s)}>Edit</button>{" "}
+                <button onClick={() => handleDelete(s.id)}>Delete</button>
+              </td>
             </tr>
           ))}
         </tbody>
