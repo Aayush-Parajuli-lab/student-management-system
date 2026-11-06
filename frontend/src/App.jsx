@@ -7,16 +7,24 @@ export default function App() {
   const [students, setStudents] = useState([]);
   const [form, setForm] = useState(emptyForm);
   const [editingId, setEditingId] = useState(null);
+  const [search, setSearch] = useState("");
   const [error, setError] = useState("");
 
   const loadStudents = () => {
-    fetch(`${API}/students`)
+    const url = search
+      ? `${API}/students?q=${encodeURIComponent(search)}`
+      : `${API}/students`;
+    fetch(url)
       .then((res) => res.json())
       .then(setStudents)
       .catch(() => setError("Could not load students"));
   };
 
-  useEffect(loadStudents, []);
+  // Reload when the search text changes (waits 300ms after typing stops)
+  useEffect(() => {
+    const timer = setTimeout(loadStudents, 300);
+    return () => clearTimeout(timer);
+  }, [search]);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -90,6 +98,14 @@ export default function App() {
         )}
       </form>
 
+      <input
+        type="search"
+        placeholder="Search by name or course..."
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+        style={{ width: "100%", padding: 8, marginBottom: 16, boxSizing: "border-box" }}
+      />
+
       {error && <p style={{ color: "red" }}>{error}</p>}
 
       <table border="1" cellPadding="8" style={{ width: "100%", borderCollapse: "collapse" }}>
@@ -104,19 +120,27 @@ export default function App() {
           </tr>
         </thead>
         <tbody>
-          {students.map((s) => (
-            <tr key={s.id}>
-              <td>{s.id}</td>
-              <td>{s.name}</td>
-              <td>{s.email}</td>
-              <td>{s.course}</td>
-              <td>{s.age}</td>
-              <td>
-                <button onClick={() => handleEdit(s)}>Edit</button>{" "}
-                <button onClick={() => handleDelete(s.id)}>Delete</button>
+          {students.length === 0 ? (
+            <tr>
+              <td colSpan="6" style={{ textAlign: "center" }}>
+                No students found
               </td>
             </tr>
-          ))}
+          ) : (
+            students.map((s) => (
+              <tr key={s.id}>
+                <td>{s.id}</td>
+                <td>{s.name}</td>
+                <td>{s.email}</td>
+                <td>{s.course}</td>
+                <td>{s.age}</td>
+                <td>
+                  <button onClick={() => handleEdit(s)}>Edit</button>{" "}
+                  <button onClick={() => handleDelete(s.id)}>Delete</button>
+                </td>
+              </tr>
+            ))
+          )}
         </tbody>
       </table>
     </div>
